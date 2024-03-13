@@ -9,16 +9,23 @@ public class HomeController : Controller
     // Home/Index
     public IActionResult Index()
     {
-        //check if session not null
-        if (HttpContext.Session.GetString("user") != null)
-        {
-            var userDto = JsonSerializer.Deserialize<UserDTO>(HttpContext.Session.GetString("user"));
-            ViewBag.Message = $"Welcome {userDto.FirstName} {userDto.LastName}";
-        }
+		var userDtoSerialize = HttpContext.Session.GetString("user");
 
-        ViewData["Title"] = "Home Page";
-        return View();
-    }
+		if (userDtoSerialize != null)
+		{
+			// Deserialize user session data
+			var userDto = JsonSerializer.Deserialize<UserDTO>(userDtoSerialize);
+
+			// Now you can access the properties of the user DTO object
+			// Other properties...
+			return View(userDto);
+		}
+		else
+		{
+			// Session data not found
+			return View();
+		}
+	}
 
     [Route("/Hello/ASP")]
     public IActionResult HelloASP()

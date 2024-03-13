@@ -15,7 +15,23 @@ namespace SampleMVC.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            // Retrieve user session data
+            var userDtoSerialize = HttpContext.Session.GetString("user");
+
+            if (userDtoSerialize != null)
+            {
+                // Deserialize user session data
+                var userDto = JsonSerializer.Deserialize<UserDTO>(userDtoSerialize);
+
+                // Now you can access the properties of the user DTO object
+                // Other properties...
+                return View(userDto);
+            }
+            else
+            {
+                // Session data not found
+                return View();
+            }
         }
 
         public IActionResult Login()
@@ -42,8 +58,6 @@ namespace SampleMVC.Controllers
                 //simpan username ke session
                 var userDtoSerialize = JsonSerializer.Serialize(userDto);
                 HttpContext.Session.SetString("user", userDtoSerialize);
-
-                TempData["Message"] = "Welcome " + userDto.Username;
                 return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
@@ -52,11 +66,12 @@ namespace SampleMVC.Controllers
                 return View();
             }
         }
-
+        //[HttpPost]
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("user");
-            return RedirectToAction("Login");
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login","Users");
         }
 
         //register user baru

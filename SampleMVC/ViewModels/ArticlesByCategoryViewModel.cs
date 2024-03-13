@@ -8,5 +8,6 @@ namespace SampleMVC.ViewModels
         public int CategoryID { get; set; }
         public SelectList Categories { get; set; }
         public List<ArticleDTO> Articles { get; set; }
+        public List<RoleDTO> Roles { get; set; }
     }
 }

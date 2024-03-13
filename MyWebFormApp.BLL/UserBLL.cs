@@ -44,8 +44,37 @@ namespace MyWebFormApp.BLL
             }
             return usersDTO;
         }
+		public IEnumerable<UserDTO> GetAllWithRoles()
+		{
+			var users = userDAL.GetAllWithRoles();
+			var usersDTO = new List<UserDTO>();
+			foreach (var user in users)
+			{
+				var lstRolesDto = new List<RoleDTO>();
+				var roles = user.Roles;
+				foreach (var role in roles)
+				{
+					lstRolesDto.Add(new RoleDTO
+					{
+						RoleID = role.RoleID,
+						RoleName = role.RoleName
+					});
+				}
+				usersDTO.Add(new UserDTO
+				{
+					Username = user.Username,
+					FirstName = user.FirstName,
+					LastName = user.LastName,
+					Address = user.Address,
+					Email = user.Email,
+					Telp = user.Telp,
+                    Roles = lstRolesDto
+				});
+			}
+			return usersDTO;
+		}
 
-        public UserDTO GetByUsername(string username)
+		public UserDTO GetByUsername(string username)
         {
             throw new NotImplementedException();
         }

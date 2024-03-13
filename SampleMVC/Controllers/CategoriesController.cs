@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using MyWebFormApp.BLL.DTOs;
 using MyWebFormApp.BLL.Interfaces;
+using SampleMVC.ViewModels;
 
 namespace SampleMVC.Controllers;
 
@@ -11,12 +13,12 @@ public class CategoriesController : Controller
     public CategoriesController(ICategoryBLL categoryBLL)
     {
         _categoryBLL = categoryBLL;
-    }
+	}
 
     public IActionResult Index(int pageNumber = 1, int pageSize = 5, string search = "", string act = "")
     {
         //pengecekan session username
-        if (HttpContext.Session.GetString("username") == null)
+        if (HttpContext.Session.GetString("user") == null)
         {
             TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong>Anda harus login terlebih dahulu !</div>";
             return RedirectToAction("Login", "Users");
@@ -26,8 +28,9 @@ public class CategoriesController : Controller
         {
             ViewData["message"] = TempData["message"];
         }
-
-        ViewData["search"] = search;
+        var data = HttpContext.Session.GetString("user");
+        var userDto = JsonSerializer.Deserialize<UserDTO>(data);
+		ViewData["search"] = search;
         var models = _categoryBLL.GetWithPaging(pageNumber, pageSize, search);
         var maxsize = _categoryBLL.GetCountCategories(search);
         //return Content($"{pageNumber} - {pageSize} - {search} - {act}");
@@ -54,10 +57,12 @@ public class CategoriesController : Controller
         }
 
         ViewData["pageSize"] = pageSize;
-        //ViewData["action"] = action;
+		//ViewData["action"] = action;
+		CategoryAndRoleViewModel categoryAndRoleViewModel = new CategoryAndRoleViewModel();
+        categoryAndRoleViewModel.Categories = models;
+        categoryAndRoleViewModel.Roles = userDto.Roles.ToList();
 
-
-        return View(models);
+		return View(categoryAndRoleViewModel);
     }
 
 

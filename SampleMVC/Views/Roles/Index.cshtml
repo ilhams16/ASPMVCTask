@@ -1,0 +1,103 @@
+﻿@model SampleMVC.ViewModels.UsersAndRolesViewModel
+
+@{
+	ViewBag.Title = "Profile";
+}
+
+<div class="row">
+	<div class="d-sm-flex align-items-center justify-content-between mb-4">
+		<h1 class="h3 mb-0 text-gray-800">User Roles</h1>
+	</div>
+
+	<div class="col-lg-12">
+		<!-- Basic Card Example -->
+		<div class="card shadow mb-4">
+			<div class="card-header py-3">
+				<h6 class="m-0 font-weight-bold text-primary">User Roles</h6>
+			</div>
+			<div class="card-body">
+				@Html.Raw(ViewBag.Message)
+				<button type="button" class="btn btn-primary my-2" data-toggle="modal" data-target="#addUserModal">
+					Add User
+				</button>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Username</th>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Roles</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var user in Model.UsersWithRoles)
+						{
+							<tr>
+								<td>@user.Username</td>
+								<td>@user.FirstName @user.LastName</td>
+								<td>@user.Email</td>
+								<td class="d-flex">
+									@foreach (var role in user.Roles)
+									{
+										<span class="card bg-primary text-center text-white mx-1 p-2">@role.RoleName</span>
+									}
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+				@* <a class="btn btn-outline-info btn-sm">First</a>&nbsp;
+				<a href="/Articles/Index?act=prev&pageNumber=" class="btn btn-outline-info btn-sm">Prev</a>&nbsp;
+				<a href="/Articles/Index?act=next&pageNumber=" class="btn btn-outline-info btn-sm">Next</a>&nbsp;
+				<a class="btn btn-outline-info btn-sm">Last</a> *@
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="createRoleModalLabel">Add User</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- Form for creating a new role -->
+				<form asp-action="Create" method="post" class="form-inline">
+					<div class="modal-body">
+						<div class="form-group d-flex justify-content-between my-1">
+							<div class="mx-2">
+								<label asp-for="@Model.Username">Username</label>
+							</div>
+							<div class="mx-2">
+								<select class="form-control" asp-for="@Model.Username"
+										asp-items="@Model.Users">
+									<option value="0">--Select Username--</option>
+								</select>&nbsp;
+							</div>
+						</div>
+						<div class="form-group d-flex justify-content-between my-1">
+							<div class="mx-2">
+								<label asp-for="@Model.RoleID">Role ID</label>
+							</div>
+							<div class="mx-2">
+								<select class="form-control" asp-for="@Model.RoleID"
+										asp-items="@Model.Roles">
+									<option value="0">--Select Roles--</option>
+								</select>&nbsp;
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<button type="submit" class="btn btn-primary">Save</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+</div>
